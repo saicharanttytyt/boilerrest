@@ -922,15 +922,37 @@
                 this.style.height = this.scrollHeight + 'px';
             });
         }
-        // Directions Button Functionality
+        // Enhanced Directions Button with Auto-Coordinate Extraction
 document.addEventListener('DOMContentLoaded', () => {
     const directionsBtn = document.getElementById('directions-btn');
     
     if (directionsBtn) {
         directionsBtn.addEventListener('click', function() {
-            // Coordinates for Savory Haven location - YOU CAN CHANGE THESE VALUES
-            const destinationLat = 17.371498;  // Replace with your latitude
-            const destinationLng = 78.468042;   // Replace with your longitude
+            let destinationLat, destinationLng;
+            
+            // Try to extract coordinates from the iframe first
+            const iframe = document.querySelector('iframe[src*="google.com/maps/embed"]');
+            if (iframe) {
+                const src = iframe.src;
+                const latMatch = src.match(/!3d([0-9.-]+)/);
+                const lngMatch = src.match(/!2d([0-9.-]+)/);
+                
+                if (latMatch && lngMatch) {
+                    destinationLat = parseFloat(latMatch[1]);
+                    destinationLng = parseFloat(lngMatch[1]);
+                    console.log('Coordinates extracted from iframe:', destinationLat, destinationLng);
+                } else {
+                    // Fallback to manual coordinates if extraction fails
+                    destinationLat = 17.44162808924889;  // Corrected latitude
+                    destinationLng = 78.35745341713009;  // Longitude (same)
+                    console.log('Using fallback coordinates:', destinationLat, destinationLng);
+                }
+            } else {
+                // Fallback coordinates if no iframe found
+                destinationLat = 17.44162808924889;  // Corrected latitude
+                destinationLng = 78.35745341713009;  // Longitude (same)
+                console.log('No iframe found, using fallback coordinates:', destinationLat, destinationLng);
+            }
             
             // Check if user is on mobile device
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -945,6 +967,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
 
     </script>
 </body>
